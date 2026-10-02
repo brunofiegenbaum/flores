@@ -1,0 +1,11 @@
+{
+  "expo": {
+    "name": "Cadastro de Flores",
+    "slug": "flores",
+    "scheme": "flores",
+    "plugins": ["expo-router", "expo-sqlite"],
+    "experiments": {
+      "typedRoutes": false
+    }
+  }
+}
