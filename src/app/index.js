@@ -12,43 +12,43 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as SQLite from "expo-sqlite";
 
-const db = SQLite.openDatabaseSync("flores.db");
+const db = SQLite.openDatabaseSync("vectras.db");
 
 db.execSync(`
-  CREATE TABLE IF NOT EXISTS flores (
+  CREATE TABLE IF NOT EXISTS vectras (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    nome TEXT NOT NULL,
+    modelo TEXT NOT NULL,
     cor TEXT NOT NULL,
-    nome_cientifico TEXT NOT NULL
+    ano NUMBER NOT NULL
   );
 `);
 
 function listar() {
-  return db.getAllSync("SELECT * FROM flores ORDER BY id DESC");
+  return db.getAllSync("SELECT * FROM vectras ORDER BY id DESC");
 }
 
-function adicionar(nome, cor, nomeCientifico) {
+function adicionar(modelo, cor, ano) {
   db.runSync(
-    "INSERT INTO flores (nome, cor, nome_cientifico) VALUES (?, ?, ?)",
-    [nome, cor, nomeCientifico]
+    "INSERT INTO vectras (modelo, cor, ano) VALUES (?, ?, ?)",
+    [modelo, cor, ano]
   );
 }
 
 function excluir(id) {
-  db.runSync("DELETE FROM flores WHERE id = ?", [id]);
+  db.runSync("DELETE FROM vectras WHERE id = ?", [id]);
 }
 
-function atualizar(id, nome, cor, nomeCientifico) {
+function atualizar(id, modelo, cor, ano) {
   db.runSync(
-    "UPDATE flores SET nome = ?, cor = ?, nome_cientifico = ? WHERE id = ?",
-    [nome, cor, nomeCientifico, id]
+    "UPDATE vectras SET modelo = ?, cor = ?, ano = ? WHERE id = ?",
+    [modelo, cor, ano, id]
   );
 }
 
-export default function Flores() {
-  const [nome, setNome] = useState("");
+export default function vectras() {
+  const [modelo, setModelo] = useState("");
   const [cor, setCor] = useState("");
-  const [nomeCientifico, setNomeCientifico] = useState("");
+  const [ano, setAno] = useState("");
   const [lista, setLista] = useState([]);
   const [idEditando, setIdEditando] = useState(null);
 
@@ -61,26 +61,26 @@ export default function Flores() {
   }, []);
 
   function limpar() {
-    setNome("");
+    setModelo("");
     setCor("");
-    setNomeCientifico("");
+    setAno("");
     setIdEditando(null);
   }
 
   function salvar() {
     if (
-      nome.trim() === "" ||
+      modelo.trim() === "" ||
       cor.trim() === "" ||
-      nomeCientifico.trim() === ""
+      ano.trim() === ""
     ) {
       Alert.alert("Atenção", "Preencha todos os campos.");
       return;
     }
 
     if (idEditando !== null) {
-      atualizar(idEditando, nome.trim(), cor.trim(), nomeCientifico.trim());
+      atualizar(idEditando, modelo.trim(), cor.trim(), ano.trim());
     } else {
-      adicionar(nome.trim(), cor.trim(), nomeCientifico.trim());
+      adicionar(modelo.trim(), cor.trim(), ano  .trim());
     }
 
     limpar();
@@ -89,13 +89,13 @@ export default function Flores() {
 
   function editar(item) {
     setIdEditando(item.id);
-    setNome(item.nome);
+    setModelo(item.modelo);
     setCor(item.cor);
-    setNomeCientifico(item.nome_cientifico);
+    setAno(item.ano);
   }
 
   function remover(id) {
-    Alert.alert("Excluir flor", "Deseja excluir esta flor?", [
+    Alert.alert("Excluir vectra", "Deseja excluir este vectra?", [
       { text: "Cancelar", style: "cancel" },
       {
         text: "Excluir",
@@ -113,32 +113,32 @@ export default function Flores() {
 
   return (
     <SafeAreaView style={styles.tela} edges={["bottom"]}>
-      <Stack.Screen options={{ title: "Cadastro de Flores" }} />
+      <Stack.Screen options={{ title: "Cadastro de Vectras" }} />
 
-      <Text style={styles.titulo}>Cadastro de Flores</Text>
+      <Text style={styles.titulo}>Cadastro de Vectras</Text>
       <Text style={styles.subtitulo}>
-        Nome, cor predominante e nome científico salvos no SQLite
+        Modelo, cor predominante e ano de fabricação salvos no SQLite
       </Text>
 
       <TextInput
         style={styles.campo}
-        value={nome}
-        onChangeText={setNome}
-        placeholder="Nome da flor"
+        value={modelo}
+        onChangeText={setModelo}
+        placeholder="Modelo do Vectra" placeholderTextColor="grey"
       />
 
       <TextInput
         style={styles.campo}
         value={cor}
         onChangeText={setCor}
-        placeholder="Cor predominante"
+        placeholder="Cor predominante" placeholderTextColor="grey"
       />
 
       <TextInput
         style={styles.campo}
-        value={nomeCientifico}
-        onChangeText={setNomeCientifico}
-        placeholder="Nome científico"
+        value={ano}
+        onChangeText={setAno}
+        placeholder="Ano de fabricação" placeholderTextColor="grey"
       />
 
       <Button
@@ -160,12 +160,12 @@ export default function Flores() {
         renderItem={({ item }) => (
           <View style={styles.item}>
             <View style={styles.dadosItem}>
-              <Text style={styles.itemNome}>{item.nome}</Text>
+              <Text style={styles.itemNome}>{item.modelo}</Text>
               <Text style={styles.itemDetalhe}>Cor: {item.cor}</Text>
               <Text style={styles.itemDetalhe}>
-                Nome científico: {item.nome_cientifico}
-              </Text>
-            </View>
+                Ano: {item.ano}
+              </Text>   
+            </View> 
 
             <View style={styles.botoes}>
               <Button title="Editar" onPress={() => editar(item)} />
@@ -174,7 +174,7 @@ export default function Flores() {
           </View>
         )}
         ListEmptyComponent={
-          <Text style={styles.vazio}>Nenhuma flor cadastrada.</Text>
+          <Text style={styles.vazio}>Nenhum vectra cadastrado.</Text>
         }
       />
     </SafeAreaView>
@@ -201,13 +201,14 @@ const styles = StyleSheet.create({
   },
   campo: {
     borderWidth: 1,
-    borderColor: "#D9DDE3",
+    borderColor: "#0066ff",
     borderRadius: 12,
     padding: 12,
     fontSize: 16,
     color: "#111827",
     marginBottom: 12,
   },
+
   cancelar: {
     marginTop: 8,
   },
